@@ -1,8 +1,8 @@
 ---@class GameObject
----@field type string
----@field name string
+---@field type string   The type of the GameObject
+---@field name string   The name of the GameObject
 ---@field custom_update fun(GameObject, number)?
----@field custom_draw fun(GameObject)?
+---@field custom_draw   fun(GameObject)?
 local GameObject = {}
 GameObject.__index = GameObject
 
@@ -15,14 +15,20 @@ function GameObject.new(name, type)
     self.name = name
     self.type = type or "GameObject"
 
-    _G.objectCluster[name] = self
+    if table.find(_G.objectCluster, name) ~= nil then
+        name = name.."_"
+        self.name = name
+        print("GameObject already exists! Renaming self to "..name)
+    end
+
+    table.insert(_G.objectCluster, self)
     
     return self
 end
 
 --- Deletes the GameObject
 function GameObject:delete()
-    table.remove(_G.objectCluster, table.find(_G.objectCluster, self.name))
+    table.remove(_G.objectCluster, table.find(_G.objectCluster, self))
 end
 
 --- Updates the GameObject

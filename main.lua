@@ -4,14 +4,17 @@ package.cpath = string.format("%s;%s/?.%s", package.cpath, lib_path, "dll")
 local imgui = require("libs.cimgui.init")
 local engine = require("engine.engine")
 
-local Image = engine["Image"]
+local Image  = engine["Image"]
+local Button = engine["Button"]
 
-local image = Image.new("testImage", "button.png", 100, 100):setcustomupdate(
----@param o Image
----@param dt integer    
-function(o, dt)
-        o:addposition(1)
-    end)
+-- local image = Image.new("testImage", "button.png", 100, 100)
+-- local button = Button.new("testButton", 100, 100, 190, 50):setcustomtrigger(
+--     ---@param btn Button
+--     function (btn)
+--         image:addposition(10, 10)
+--         btn:addposition(10, 10)
+--     end)
+local imgbtn = require("engine.elements.imagebutton").new('testimgbtn', "button.png", 200, 200)
 
 function love.load()
     imgui.love.Init()
@@ -23,7 +26,18 @@ function love.draw()
     end
     
     -- imgui.ShowDemoWindow()
-    
+    imgui.Begin("Engine debug")
+    for _,v in pairs(_G.objectCluster) do
+        if imgui.Button("Delete##"..v.name) then
+            print("Deleting "..v.name.."!")
+            v:delete()
+        end
+
+        imgui.SameLine()
+        imgui.Text(v.type.." - "..v.name)
+    end
+    imgui.End()
+
     imgui.Render()
     imgui.love.RenderDrawLists()
 end
@@ -38,6 +52,10 @@ function love.update(dt)
 end
 
 function love.quit()
+    for _,v in pairs(_G.objectCluster) do
+        v:delete()
+    end
+
     return imgui.love.Shutdown()
 end
 

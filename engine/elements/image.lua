@@ -1,12 +1,12 @@
-local Drawable = require("engine.elements.drawable")
+local Transform = require("engine.elements.transform")
 local GameObject = require("engine.elements.gameobject")
 
----@class Image : Drawable
+---@class Image : Transform
 ---@field filename string
 ---@field image love.Image
 local Image = {}
 Image.__index = Image
-setmetatable(Image, {__index = Drawable})
+setmetatable(Image, {__index = Transform})
 
 ---@param name string     GameObject name
 ---@param filename string Image filename
@@ -15,7 +15,7 @@ setmetatable(Image, {__index = Drawable})
 ---@param r integer?      Rotation
 ---@param _type string?   GameObject type
 function Image.new(name, filename, x, y, r, _type)
-    local self = setmetatable(Drawable.new(name, x, y, r, _type or "Image"), Image)
+    local self = setmetatable(Transform.new(name, x, y, r, _type or "Image"), Image)
     self.filename = filename
     self.image = love.graphics.newImage("assets/"..filename)
 

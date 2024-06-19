@@ -1,6 +1,6 @@
 require("engine.utils")
 
----@type {string: GameObject}
+---@type table<string, GameObject>
 _G.objectCluster = {}
 
 return {}
