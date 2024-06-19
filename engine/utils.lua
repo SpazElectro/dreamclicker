@@ -14,22 +14,6 @@ function table.find(tbl, value)
     return nil
 end
 
---- Deep copy a table
----@param orig table The original table to copy
----@return table The deep copy of the original table
-function table.deepcopy(orig)
-    local copy
-    if type(orig) == 'table' then
-        copy = {}
-        for orig_key, orig_value in pairs(orig) do
-            copy[orig_key] = table.deepcopy(orig_value)
-        end
-    else
-        copy = orig
-    end
-    return copy
-end
-
 --- Checks if 2 boxes are colliding
 ---@param x1 integer The x position of the first box
 ---@param y1 integer The y position of the first box
