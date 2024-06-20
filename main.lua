@@ -1,3 +1,8 @@
+local ffi = require("ffi")
+function createPointer(type, default)
+    return ffi.new(type.."[1]", default)
+end
+
 local lib_path = love.filesystem.getSaveDirectory().."/libraries"
 package.cpath = string.format("%s;%s/?.%s", package.cpath, lib_path, "dll")
 
@@ -15,24 +20,45 @@ local ImageButton = engine["ImageButton"]
 --         image:addposition(10, 10)
 --         btn:addposition(10, 10)
 --     end)
-local imgbtn = ImageButton.new("testimgbtn", "button.png", 200, 200):setcustomtrigger(function (btn)
-    btn:addposition(10, 10)
+local imgbtn = ImageButton.new("testimgbtn", "button.png", 200, 200):setcustomupdate(
+---@param g Transform
+---@param dt number    
+function (g, dt)
+    g:setstate("ascend", false, false)
+    g:addposition(60*dt*(g:getstate("ascend") and -1 or 1))
+    if g.x >= 600 then
+        g:setstate("ascend", true)
+    end
+    if g.x <= 0 then
+        g:setstate("ascend", false)
+    end
 end)
 
 function love.load()
     imgui.love.Init()
 end
 
+---@type {inspecting: table<GameObject>, timeScale: ffi.cdata*}
+local debug = {
+    inspecting = {},
+    timeScale = createPointer("float", 1.0)
+}
+
 function love.draw()
     for _,v in pairs(_G.objectCluster) do
         v:draw()
     end
-    
-    -- imgui.ShowDemoWindow()
-    imgui.Begin("Engine debug")
+
+    imgui.Begin("Engine")
+    imgui.SliderFloat("Time scale", debug.timeScale, 0.5, 10.0, "%.2f", 0)
+    imgui.End()
+
+    imgui.Begin("Explorer")
     for _,v in pairs(_G.objectCluster) do
-        if imgui.Button("Delete##"..v.name) then
-            v:delete()
+        if imgui.Button("Inspect##"..v.name) then
+            if table.find(debug.inspecting, v) == nil then
+                table.insert(debug.inspecting, v)
+            end
         end
 
         imgui.SameLine()
@@ -40,11 +66,45 @@ function love.draw()
     end
     imgui.End()
 
+    for i, t in pairs(debug.inspecting) do
+        imgui.Begin("Inspector##"..t.name)
+        imgui.Text("Name: "..t.name)
+        imgui.SameLine()
+        imgui.Text("Type: "..t.type)
+        
+        imgui.Text("Has custom update: "..tostring(t.custom_update~=nil))
+        imgui.SameLine()
+        if imgui.Button("Delete##cu"..t.name) then
+            t.custom_update = nil
+        end
+        imgui.Text("Has custom draw: "..tostring(t.custom_draw~=nil))
+        imgui.SameLine()
+        if imgui.Button("Delete##cd"..t.name) then
+            t.custom_draw = nil
+        end
+
+        if imgui.Button("Delete##"..t.name) then
+            t:delete()
+---@diagnostic disable-next-line: param-type-mismatch
+            table.remove(debug.inspecting, i)
+        end
+        imgui.SameLine()
+        if imgui.Button("Cancel##"..t.name) then
+---@diagnostic disable-next-line: param-type-mismatch
+            table.remove(debug.inspecting, i)
+        end
+
+        
+        imgui.End()
+    end
+
     imgui.Render()
     imgui.love.RenderDrawLists()
 end
 
 function love.update(dt)
+    dt = dt * debug.timeScale[0]
+
     for _,v in pairs(_G.objectCluster) do
         v:update(dt)
     end
