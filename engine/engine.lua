@@ -14,5 +14,7 @@ end
 return {
     ["Image"] = require("engine.elements.image"),
     ["Button"] = require("engine.elements.button"),
+    ["ImageButton"] = require("engine.elements.imagebutton"),
+
     ["pass"] = passEvent
 }

@@ -6,6 +6,7 @@ local engine = require("engine.engine")
 
 local Image  = engine["Image"]
 local Button = engine["Button"]
+local ImageButton = engine["ImageButton"]
 
 -- local image = Image.new("testImage", "button.png", 100, 100)
 -- local button = Button.new("testButton", 100, 100, 190, 50):setcustomtrigger(
@@ -14,7 +15,7 @@ local Button = engine["Button"]
 --         image:addposition(10, 10)
 --         btn:addposition(10, 10)
 --     end)
-local imgbtn = require("engine.elements.imagebutton").new('testimgbtn', "button.png", 200, 200):setcustomtrigger(function (btn)
+local imgbtn = ImageButton.new("testimgbtn", "button.png", 200, 200):setcustomtrigger(function (btn)
     btn:addposition(10, 10)
 end)
 
