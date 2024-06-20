@@ -54,4 +54,11 @@ function Transform:iscollidingwith(b)
     return utils.boundingboxcheck(self:getboundingbox(), b:getboundingbox())
 end
 
+function Transform:draw()
+    GameObject.draw(self)
+    
+    -- debug hitbox
+    love.graphics.rectangle("line", self.x, self.y, self.width, self.height)
+end
+
 return Transform

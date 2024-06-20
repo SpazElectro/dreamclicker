@@ -23,7 +23,7 @@ function Image.new(name, filename, x, y, r, _type)
 end
 
 function Image:draw()
-    GameObject.draw(self)
+    Transform.draw(self)
     love.graphics.draw(self.image, self.x, self.y, self.r)
 end
 

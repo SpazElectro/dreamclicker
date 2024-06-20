@@ -14,7 +14,9 @@ local Button = engine["Button"]
 --         image:addposition(10, 10)
 --         btn:addposition(10, 10)
 --     end)
-local imgbtn = require("engine.elements.imagebutton").new('testimgbtn', "button.png", 200, 200)
+local imgbtn = require("engine.elements.imagebutton").new('testimgbtn', "button.png", 200, 200):setcustomtrigger(function (btn)
+    btn:addposition(10, 10)
+end)
 
 function love.load()
     imgui.love.Init()
@@ -29,7 +31,6 @@ function love.draw()
     imgui.Begin("Engine debug")
     for _,v in pairs(_G.objectCluster) do
         if imgui.Button("Delete##"..v.name) then
-            print("Deleting "..v.name.."!")
             v:delete()
         end
 
